@@ -1,0 +1,95 @@
+// fsmcBank1: Memory.MappedMemory @ sysbus 0x60000000
+//    size: 0x10000000
+
+sram: Memory.MappedMemory @ sysbus 0x20000000
+    size: 0x5000
+
+flash: Memory.MappedMemory @ sysbus 0x08000000
+    size: 0x20000
+
+peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
+    peripheralBase: 0x40000000
+
+flash_controller: MTD.STM32F1_FLASH @ sysbus 0x40022000
+    flash: flash
+    pageSize: 0x400
+    pageNum: 0x40
+
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    priorityMask: 0xF0
+    systickFrequency: 144000000
+    IRQ -> cpu@0
+
+nvicInput23: Miscellaneous.CombinedInput @ none
+    numberOfInputs: 5
+    -> nvic@23
+
+nvicInput40: Miscellaneous.CombinedInput @ none
+    numberOfInputs: 6
+    -> nvic@40
+
+exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
+    numberOfOutputLines: 19
+    [0-4] -> nvic@[6-10] 
+    [5-9] -> nvicInput23@[0-4]
+    [10-15] -> nvicInput40@[0-5]
+
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
+
+rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
+    -> nvic@3
+
+gpioPortA: GPIOPort.STM32F1_GPIO @ sysbus <0x40010800, +0x400>
+    2 -> powerEnable@0
+    9 -> vibrator@0
+    15 -> pulseLED@0
+
+gpioPortB: GPIOPort.STM32F1_GPIO @ sysbus <0x40010C00, +0x400>
+    [0-15] -> st7789@[16-31]
+
+gpioPortC: GPIOPort.STM32F1_GPIO @ sysbus <0x40011000, +0x400>
+    5 -> st7789@0
+    7 -> st7789@3
+    8 -> st7789@1
+    10 -> exti@10
+
+tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
+    IRQ -> nvic@25
+    frequency: 72000000
+    initialLimit: 0xFFFF
+
+tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
+    IRQ -> nvic@28
+    frequency: 72000000
+    initialLimit: 0xFFFF
+
+adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
+    IRQ -> nvic@3
+
+spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
+
+powerEnable: Miscellaneous.LED @ gpioPortA
+
+vibrator: Miscellaneous.LED @ gpioPortA
+
+pulseLED: Miscellaneous.LED @ gpioPortA
+
+st7789: Video.ST7789 @ spi1
+    width:240
+    height:320
+    rotation:90
+    keyEnter -> gpioPortA@1
+    keyLeft -> gpioPortC@3
+    keyRight -> gpioPortC@1
+    keyUp -> gpioPortC@0
+    keyDown -> gpioPortC@2
+    keySpace -> gpioPortC@10
+    keySpaceInvert:false
+
+sysbus:
+    init:
+        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz

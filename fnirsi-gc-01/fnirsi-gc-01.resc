@@ -1,0 +1,32 @@
+using sysbus
+
+include @../src/STM32F1_ADC.cs
+include @../src/STM32F1_FLASH.cs
+include @../src/STM32F1_GPIO.cs
+include @../src/STM32F1_RCC.cs
+include @../src/STM32F1_RTC.cs
+include @../src/STM32F1_SPI.cs
+include @../src/STM32F1_TIM.cs
+include @../src/ST7789.cs
+
+mach create
+machine LoadPlatformDescription @fnirsi-gc-01.repl
+
+$bootloader_bin?=@bootloader.bin
+sysbus LoadBinary $bootloader_bin 0x08000000
+$bin_raw?=@GC-01_V1.6.bin
+sysbus LoadBinary $bin_raw 0x08004000
+cpu VectorTableOffset 0x08004000
+
+adc1 FeedSample 2482 0 1000000
+adc1 FeedSample 2000 4 1000000
+
+showAnalyzer spi1.st7789
+
+logLevel -1 sysbus.gpioPortA.powerEnable
+logLevel -1 sysbus.gpioPortA.vibrator
+logLevel -1 sysbus.gpioPortA.pulseLED
+
+# sysbus LogPeripheralAccess flash_controller
+
+start
