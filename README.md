@@ -1,3 +1,5 @@
+![Screenshot](img/screenshot.png)
+
 # STM32 Emulator Renode
 
 STM32 Emulator Renode is an STM32 emulator designed for simulating firmware typically found in consumer electronic devices.

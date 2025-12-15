@@ -27,8 +27,8 @@ using Antmicro.Renode.Peripherals.SPI;
  *   keyLeft
  *   keyUp
  *   keyDown
- *   knobA
- *   knobB
+ *   knobA (mapped to PageUp/PageDown keys)
+ *   knobB (mapped to PageUp/PageDown keys)
  *
  * The rotary encoder is controlled with the PageUp/PageDown keys.
  */
@@ -113,6 +113,14 @@ namespace Antmicro.Renode.Peripherals.Video
             dataIndex = 0;
 
             // Keyboard
+            this.keyEnterInvert = keyEnterInvert;
+            this.keySpaceInvert = keySpaceInvert;
+            this.keyBackSpaceInvert = keyBackSpaceInvert;
+            this.keyRightInvert = keyRightInvert;
+            this.keyLeftInvert = keyLeftInvert;
+            this.keyUpInvert = keyUpInvert;
+            this.keyDownInvert = keyDownInvert;
+
             keyEnter = new GPIO();
             keySpace = new GPIO();
             keyBackSpace = new GPIO();
@@ -122,22 +130,26 @@ namespace Antmicro.Renode.Peripherals.Video
             keyDown = new GPIO();
             knobA = new GPIO();
             knobB = new GPIO();
-
-            this.keyEnterInvert = keyEnterInvert;
-            this.keySpaceInvert = keySpaceInvert;
-            this.keyBackSpaceInvert = keyBackSpaceInvert;
-            this.keyRightInvert = keyRightInvert;
-            this.keyLeftInvert = keyLeftInvert;
-            this.keyUpInvert = keyUpInvert;
-            this.keyDownInvert = keyDownInvert;
         }
 
         public override void Reset()
         {
+            // Display
             Array.Clear(framebuffer, 0, framebuffer.Length);
 
             isSleepOff = false;
             isDisplayOn = false;
+
+            // Keyboard
+            keyEnter.Set(keyEnterInvert);
+            keySpace.Set(keySpaceInvert);
+            keyBackSpace.Set(keyBackSpaceInvert);
+            keyRight.Set(keyRightInvert);
+            keyLeft.Set(keyLeftInvert);
+            keyUp.Set(keyUpInvert);
+            keyDown.Set(keyDownInvert);
+            knobA.Set(false);
+            knobB.Set(false);
         }
 
         // Display

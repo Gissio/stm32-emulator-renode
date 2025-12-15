@@ -14,11 +14,13 @@ machine LoadPlatformDescription @fnirsi-gc-03.repl
 
 $bin_raw?=@APP_GC_03_V1.0.4_20250717.bin
 sysbus LoadBinary $bin_raw 0x08006000
+$settings_bin?=@settings.bin
+sysbus LoadBinary $settings_bin 0x0803fc00
 cpu VectorTableOffset 0x08006000
 
 adc1 FeedSample 2482 10 1000000
-adc1 FeedSample 2176 12 1000000
-adc1 FeedSample 64 13 1000000
+adc1 FeedSample 160 12 1000000
+adc1 FeedSample 140 13 1000000
 
 showAnalyzer spi1.st7789
 

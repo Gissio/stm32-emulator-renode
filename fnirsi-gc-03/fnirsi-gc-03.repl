@@ -115,6 +115,7 @@ st7789: Video.ST7789 @ spi1
     height:320
     rotation:0
     keyEnter -> gpioPortA@9
+    keyEnterInvert:false
     keyLeft -> gpioPortB@9
     keyRight -> gpioPortB@8
     knobA -> gpioPortB@5
