@@ -14,7 +14,7 @@ using Antmicro.Renode.Utilities.Collections;
 
 namespace Antmicro.Renode.Peripherals.SPI
 {
-    public class STM32F1_SPI : NullRegistrationPointPeripheralContainer<ISPIPeripheral>, IWordPeripheral, IDoubleWordPeripheral, IBytePeripheral, IKnownSize
+    public sealed class STM32F1_SPI : NullRegistrationPointPeripheralContainer<ISPIPeripheral>, IWordPeripheral, IDoubleWordPeripheral, IBytePeripheral, IKnownSize
     {
         public STM32F1_SPI(IMachine machine, int bufferCapacity = DefaultBufferCapacity) : base(machine)
         {
@@ -32,7 +32,7 @@ namespace Antmicro.Renode.Peripherals.SPI
         public byte ReadByte(long offset)
         {
             // byte interface is there for DMA
-            if (offset % 4 == 0)
+            if(offset % 4 == 0)
             {
                 return (byte)ReadDoubleWord(offset);
             }
@@ -42,7 +42,7 @@ namespace Antmicro.Renode.Peripherals.SPI
 
         public void WriteByte(long offset, byte value)
         {
-            if (offset % 4 == 0)
+            if(offset % 4 == 0)
             {
                 WriteDoubleWord(offset, (uint)value);
             }
@@ -76,7 +76,7 @@ namespace Antmicro.Renode.Peripherals.SPI
         {
             IRQ.Unset();
             DMAReceive.Unset();
-            lock (receiveBuffer)
+            lock(receiveBuffer)
             {
                 receiveBuffer.Clear();
             }
@@ -98,9 +98,9 @@ namespace Antmicro.Renode.Peripherals.SPI
         private uint HandleDataRead()
         {
             IRQ.Unset();
-            lock (receiveBuffer)
+            lock(receiveBuffer)
             {
-                if (receiveBuffer.TryDequeue(out var value))
+                if(receiveBuffer.TryDequeue(out var value))
                 {
                     Update();
                     return value;
@@ -115,25 +115,23 @@ namespace Antmicro.Renode.Peripherals.SPI
         private void HandleDataWrite(uint value)
         {
             IRQ.Unset();
-            lock (receiveBuffer)
+            lock(receiveBuffer)
             {
                 var peripheral = RegisteredPeripheral;
-                if (peripheral == null)
+                if(peripheral == null)
                 {
                     this.Log(LogLevel.Warning, "SPI transmission while no SPI peripheral is connected.");
                     receiveBuffer.Enqueue(0x0);
                     return;
                 }
-
                 if (data16Bit.Value)
                 {
-                    var response16 = peripheral.Transmit((byte)(value >> 8));
-                    receiveBuffer.Enqueue(response16);
+                    var responseHigh = peripheral.Transmit((byte)(value >> 8));
+                    receiveBuffer.Enqueue(responseHigh);
                 }
                 var response = peripheral.Transmit((byte)value);
                 receiveBuffer.Enqueue(response);
-
-                if (rxDmaEnable.Value)
+                if(rxDmaEnable.Value)
                 {
                     // This blink is used to signal the DMA that it should perform the peripheral -> memory transaction now
                     // Without this signal DMA will never move data from the receive buffer to memory
@@ -162,29 +160,26 @@ namespace Antmicro.Renode.Peripherals.SPI
             Registers.Control1.Define(registers)
                 .WithFlag(0, name: "CPHA") // Physical
                 .WithFlag(1, name: "CPOL") // Physical
-                .WithFlag(2,
-                    writeCallback: (_, value) =>
+                .WithFlag(2, writeCallback: (_, value) =>
+                {
+                    if(!value)
                     {
-                        if (!value)
-                        {
-                            this.Log(LogLevel.Warning, "Slave mode is not supported");
-                        }
-                    }, name: "MSTR")
+                        this.Log(LogLevel.Warning, "Slave mode is not supported");
+                    }
+                }, name: "MSTR")
                 .WithValueField(3, 3, name: "Baud") // Physical
-                .WithFlag(6,
-                    changeCallback: (oldValue, newValue) =>
+                .WithFlag(6, changeCallback: (oldValue, newValue) =>
+                {
+                    if(!newValue)
                     {
-                        if (!newValue)
-                        {
-                            IRQ.Unset();
-                        }
-                    }, name: "SpiEnable")
+                        IRQ.Unset();
+                    }
+                }, name: "SpiEnable")
                 .WithFlag(7, name: "LSBFIRST") // Physical
                                                // We keep these as flags to preserve written values. SSI flag is used by drivers to select/detect operation mode (Master or Slave)
                 .WithFlag(8, name: "SSI") // Internal slave select
                 .WithFlag(9, name: "SSM") // Software slave management
                 .WithTaggedFlag("RXONLY", 10)
-                // .WithTaggedFlag("DFF", 11)
                 .WithFlag(11, out data16Bit, name: "DFF")
                 .WithTaggedFlag("CRCNEXT", 12)
                 .WithTaggedFlag("CRCEN", 13)
@@ -204,10 +199,8 @@ namespace Antmicro.Renode.Peripherals.SPI
                 .WithWriteCallback((_, __) => Update());
 
             Registers.Status.Define(registers, 2)
-                .WithFlag(0, FieldMode.Read,
-                    valueProviderCallback: _ => receiveBuffer.Count != 0, name: "RXNE")
-                .WithFlag(1, FieldMode.Read,
-                    valueProviderCallback: _ => true, name: "TXE") // transfers are instant
+                .WithFlag(0, FieldMode.Read, valueProviderCallback: _ => receiveBuffer.Count != 0, name: "RXNE")
+                .WithFlag(1, FieldMode.Read, valueProviderCallback: _ => true, name: "TXE") // transfers are instant
                 .WithTaggedFlag("CHSIDE", 2) // r/o
                 .WithTaggedFlag("UDR", 3) // r/o
                 .WithTaggedFlag("CRCERR", 4) // rc_w0
@@ -242,15 +235,14 @@ namespace Antmicro.Renode.Peripherals.SPI
                 .WithReservedBits(6, 1)
                 .WithTaggedFlag("PCMSYNC", 7)
                 .WithTag("I2SCFG", 8, 2)
-                .WithFlag(10, FieldMode.Read | FieldMode.WriteOneToClear,
-                    writeCallback: (oldValue, newValue) =>
+                .WithFlag(10, FieldMode.Read | FieldMode.WriteOneToClear, writeCallback: (oldValue, newValue) =>
+                {
+                    // write one to clear to keep this bit 0
+                    if(newValue)
                     {
-                        // write one to clear to keep this bit 0
-                        if (newValue)
-                        {
-                            this.Log(LogLevel.Warning, "Trying to enable not supported I2S mode.");
-                        }
-                    }, name: "I2SE")
+                        this.Log(LogLevel.Warning, "Trying to enable not supported I2S mode.");
+                    }
+                }, name: "I2SE")
                 .WithTaggedFlag("I2SMOD", 11)
                 .WithReservedBits(12, 20);
 

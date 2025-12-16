@@ -1,3 +1,8 @@
+// Made from scratch by Gissio (C)-2025:
+// * Implements STM32F1 RTC peripheral
+// * Second and alarm interrupts
+// * Prescaler handling
+
 using System.Collections.Generic;
 
 using Antmicro.Renode.Core;

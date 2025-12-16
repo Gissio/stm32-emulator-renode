@@ -37,7 +37,7 @@ namespace Antmicro.Renode.Peripherals.Analog
     // * Discontinuous mode
     // * Multi-ADC (i.e. Dual/Triple) mode
     //
-    // Mods by Gissio (C)-2025 (STM32_ADC):
+    // Mods to STM32F3_ADC by Gissio (C)-2025 (STM32_ADC):
     // * Added word to double word translation attribute.
     // * Removed dmaDisableSelection/endOfConversionSelect and related logic.
     // * Added support for external triggering through GPIO.

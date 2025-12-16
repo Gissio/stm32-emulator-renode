@@ -7,7 +7,7 @@ sram: Memory.MappedMemory @ sysbus 0x20000000
 flash: Memory.MappedMemory @ sysbus 0x08000000
     size: 0x40000
 
-flash_controller: MTD.STM32F1_FLASH @ sysbus 0x40022000
+flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
     flash: flash
     pageSize: 0x400
     pageNum: 0x100
@@ -40,11 +40,11 @@ rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
 rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
 
-gpioPortA: GPIOPort.STM32F1_GPIO @ sysbus <0x40010800, +0x400>
+gpioPortA: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010800, +0x400>
     3 -> exti@3
     10 -> powerEnable@0
 
-gpioPortB: GPIOPort.STM32F1_GPIO @ sysbus <0x40010C00, +0x400>
+gpioPortB: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010C00, +0x400>
     1 -> vibrator@0
     5 -> exti@5
     7 -> exti@7
@@ -52,7 +52,7 @@ gpioPortB: GPIOPort.STM32F1_GPIO @ sysbus <0x40010C00, +0x400>
     14 -> emfMeterEn@0
     15 -> pulseLED@0
 
-gpioPortC: GPIOPort.STM32F1_GPIO @ sysbus <0x40011000, +0x400>
+gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     4 -> st7789@1
     5 -> st7789@0
 

@@ -4,6 +4,9 @@
 // This file is licensed under the MIT License.
 // Full license text is available in 'licenses/MIT.txt'.
 //
+
+// Based on STM32F4_FlashController by Gissio (C)-2025:
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,9 +19,9 @@ using Antmicro.Renode.Peripherals.Memory;
 namespace Antmicro.Renode.Peripherals.MTD
 {
     [AllowedTranslations(AllowedTranslation.ByteToDoubleWord | AllowedTranslation.WordToDoubleWord)]
-    public class STM32F1_FLASH : STM32_FlashController, IKnownSize
+    public class STM32F1_FlashController : STM32_FlashController, IKnownSize
     {
-        public STM32F1_FLASH(IMachine machine, MappedMemory flash, uint pageSize, uint pageNum) : base(machine)
+        public STM32F1_FlashController(IMachine machine, MappedMemory flash, uint pageSize, uint pageNum) : base(machine)
         {
             this.flash = flash;
             this.pageSize = pageSize;
@@ -55,9 +58,9 @@ namespace Antmicro.Renode.Peripherals.MTD
         {
             Registers.AccessControl.Define(this, 0x00000030)
                 .WithValueField(0, 3, name: "LATENCY")
-                .WithFlag(3, name: "HLFCYA")
-                .WithFlag(4, name: "PRFTBE")
-                .WithFlag(5, name: "PRFTBS")
+                .WithTaggedFlag("HLFCYA", 3)
+                .WithTaggedFlag("PRFTBE", 4)
+                .WithTaggedFlag("PRFTBS", 5)
                 .WithReservedBits(6, 26);
 
             Registers.Key.Define(this)
@@ -78,12 +81,12 @@ namespace Antmicro.Renode.Peripherals.MTD
                 .WithReservedBits(6, 26);
 
             Registers.Control.Define(this, 0x00000080)
-                .WithFlag(0, name: "PG")
+                .WithTaggedFlag("PG", 0)
                 .WithFlag(1, out var pageErase, name: "PER")
                 .WithFlag(2, out var massErase, name: "MER")
                 .WithReservedBits(3, 1)
-                .WithFlag(4, name: "OPTPG")
-                .WithFlag(5, name: "OPTER")
+                .WithTaggedFlag("OPTPG", 4)
+                .WithTaggedFlag("OPTER", 5)
                 .WithFlag(6, out var startErase, name: "STRT",
                     mode: FieldMode.Read | FieldMode.Set,
                     valueProviderCallback: _ => false)
