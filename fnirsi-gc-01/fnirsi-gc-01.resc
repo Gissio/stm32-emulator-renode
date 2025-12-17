@@ -2,7 +2,6 @@ using sysbus
 
 include @../src/STM32F1_ADC.cs
 include @../src/STM32F1_FlashController.cs
-include @../src/STM32F1_GPIO.cs
 include @../src/STM32F1_RCC.cs
 include @../src/STM32F1_RTC.cs
 include @../src/STM32F1_SPI.cs
@@ -26,6 +25,8 @@ showAnalyzer spi1.st7789
 logLevel -1 sysbus.gpioPortA.powerEnable
 logLevel -1 sysbus.gpioPortA.vibrator
 logLevel -1 sysbus.gpioPortA.pulseLED
+
+logLevel -1 sysbus.spi1.st7789
 
 # sysbus LogPeripheralAccess flash_controller
 

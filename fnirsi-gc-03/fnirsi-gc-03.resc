@@ -2,7 +2,6 @@ using sysbus
 
 include @../src/STM32F1_ADC.cs
 include @../src/STM32F1_FlashController.cs
-include @../src/STM32F1_GPIO.cs
 include @../src/STM32F1_RCC.cs
 include @../src/STM32F1_RTC.cs
 include @../src/STM32F1_SPI.cs
