@@ -9,11 +9,11 @@ include @../src/STM32F1_TIM.cs
 include @../src/ST7789.cs
 
 mach create
-machine LoadPlatformDescription @fnirsi-gc-03.repl
+machine LoadPlatformDescription @emulation.repl
 
-$bin_raw?=@APP_GC_03_V1.0.4_20250717.bin
+$bin_raw?=@firmware/APP_GC_03_V1.0.4_20250717.bin
 sysbus LoadBinary $bin_raw 0x08006000
-$settings_bin?=@settings.bin
+$settings_bin?=@firmware/settings.bin
 sysbus LoadBinary $settings_bin 0x0803fc00
 cpu VectorTableOffset 0x08006000
 
@@ -24,10 +24,10 @@ adc1 FeedSample 140 13 1000000
 showAnalyzer spi1.st7789
 
 logLevel -1 sysbus.gpioPortA.powerEnable
-logLevel -1 sysbus.gpioPortB.vibrator
-logLevel -1 sysbus.gpioPortB.pb12
 logLevel -1 sysbus.gpioPortB.emfMeterEn
 logLevel -1 sysbus.gpioPortB.pulseLED
+logLevel -1 sysbus.gpioPortB.vibrator
+logLevel -1 sysbus.gpioPortB.pb12
 
 # sysbus LogPeripheralAccess flash_controller
 

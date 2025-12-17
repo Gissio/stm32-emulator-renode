@@ -12,9 +12,12 @@ flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
     pageSize: 0x400
     pageNum: 0x100
 
+peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
+    peripheralBase: 0x40000000
+
 nvic: IRQControllers.NVIC @ sysbus 0xE000E000
     priorityMask: 0xF0
-    systickFrequency: 144000000
+    systickFrequency: 72000000
     IRQ -> cpu@0
 
 nvicInput23: Miscellaneous.CombinedInput @ none
@@ -41,49 +44,36 @@ rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
 
 gpioPortA: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010800, +0x400>
-    3 -> exti@3
-    10 -> powerEnable@0
+    1 -> exti@1
 
 gpioPortB: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010C00, +0x400>
-    1 -> vibrator@0
-    5 -> exti@5
-    7 -> exti@7
-    12 -> pb12@0
-    14 -> emfMeterEn@0
+    3 -> pulseLED@0
+    4 -> alertLED@0
+    5 -> vibrator@0
+    11 -> st7789@1
     15 -> pulseLED@0
 
 gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
-    4 -> st7789@1
-    5 -> st7789@0
+    3 -> powerEnable@0
+    6 -> st7789@0
 
 tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
-    frequency: 144000000
+    frequency: 72000000
     initialLimit: 0xFFFF
-    IRQ -> nvic@25
 
 tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
-    frequency: 144000000
+    frequency: 72000000
     initialLimit: 0xFFFF
-    IRQ -> nvic@28
-    TriggerOutput2 -> adc1@0
 
-tim5: Timers.STM32F1_TIM @ sysbus 0x40000c00
-    frequency: 144000000
+tim3: Timers.STM32F1_TIM @ sysbus 0x40000400
+    frequency: 72000000
     initialLimit: 0xFFFF
-    IRQ -> nvic@50
 
-tim7: Timers.STM32F1_TIM @ sysbus 0x40001400
-    frequency: 144000000
-    initialLimit: 0xFFFF
-    IRQ -> nvic@55
-
-tim10: Timers.STM32F1_TIM @ sysbus 0x40015000
-    frequency: 144000000
+tim4: Timers.STM32F1_TIM @ sysbus 0x40000800
+    frequency: 72000000
     initialLimit: 0xFFFF
 
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
-    // IRQ -> nvic@3
-    DMARequest -> dma1@1
 
 dma1: DMA.STM32G0DMA @ sysbus 0x40020000
     numberOfChannels: 7
@@ -91,37 +81,29 @@ dma1: DMA.STM32G0DMA @ sysbus 0x40020000
 
 spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
 
-usart3: UART.STM32_UART @ sysbus <0x40004800, +0x100>
-    -> nvic@39
+usart1: UART.STM32_UART @ sysbus <0x40003800, +0x100>
+    -> nvic@37
 
 powerEnable: Miscellaneous.LED @ gpioPortA
+powerUSB: Miscellaneous.Button @ gpioPortC
+    -> gpioPortC@1
+powerCharging: Miscellaneous.Button @ gpioPortB
+    -> gpioPortB@12
 
 vibrator: Miscellaneous.LED @ gpioPortB
 
-pb12: Miscellaneous.LED @ gpioPortB
-
-emfMeterEn: Miscellaneous.LED @ gpioPortB
-
 pulseLED: Miscellaneous.LED @ gpioPortB
-
-powerUSB: Miscellaneous.Button @ gpioPortC
-    -> gpioPortC@6
-
-powerCharging: Miscellaneous.Button @ gpioPortC
-    -> gpioPortC@7
+alertLED: Miscellaneous.LED @ gpioPortB
 
 st7789: Video.ST7789 @ spi1
     width:240
     height:320
     rotation:0
-    keyEnter -> gpioPortA@9
-    keyEnterInvert:false
-    keyLeft -> gpioPortB@9
-    keyRight -> gpioPortB@8
-    knobA -> gpioPortB@5
-    knobB -> gpioPortB@7
-    keyDown -> gpioPortB@6
-    keySpace -> gpioPortA@3
+    keyLeft -> gpioPortB@15
+    keyRight -> gpioPortB@10
+    keyUp -> gpioPortB@14
+    keyDown -> gpioPortB@13
+    keySpace -> gpioPortA@1
     keySpaceInvert:false
 
 sysbus:

@@ -7,13 +7,13 @@ sram: Memory.MappedMemory @ sysbus 0x20000000
 flash: Memory.MappedMemory @ sysbus 0x08000000
     size: 0x20000
 
-peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
-    peripheralBase: 0x40000000
-
 flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
     flash: flash
     pageSize: 0x400
     pageNum: 0x40
+
+peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
+    peripheralBase: 0x40000000
 
 nvic: IRQControllers.NVIC @ sysbus 0xE000E000
     priorityMask: 0xF0
@@ -74,9 +74,9 @@ spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
 
 powerEnable: Miscellaneous.LED @ gpioPortA
 
-vibrator: Miscellaneous.LED @ gpioPortA
-
 pulseLED: Miscellaneous.LED @ gpioPortA
+
+vibrator: Miscellaneous.LED @ gpioPortA
 
 st7789: Video.ST7789 @ spi1
     width:240
