@@ -1,9 +1,11 @@
-# FNIRSI GC-03 emulation
+# GQ GMC-800 emulation
 
 Keys:
 * Left: Back
-* Right: OK/Settings
-* PageUp/PageDown: Moves knob (each click requires two presses)
-* Space: Simulates Geiger tube count
+* Right: Power
+* Up: Up
+* Down: Down
 
 The emulation is not realtime.
+
+You need to press the power button for simulated 0.5 s to turn on the device.
