@@ -11,7 +11,7 @@ include @../src/ST7789.cs
 mach create
 machine LoadPlatformDescription @emulation.repl
 
-$bin_raw?=@firmware/firmware.bin
+$bin_raw?=@firmware/radpro-gq-gmc800-en-3.0.2.bin
 sysbus LoadBinary $bin_raw 0x08000000
 cpu VectorTableOffset 0x08000000
 
@@ -20,8 +20,8 @@ adc1 FeedSample 2482 14 1000000
 showAnalyzer spi1.st7789
 
 logLevel -1 sysbus.gpioPortA.powerEnable
-logLevel -1 sysbus.gpioPortB.pulseLED
-logLevel -1 sysbus.gpioPortB.alertLED
+logLevel -1 sysbus.gpioPortB.greenLEDEnable
+logLevel -1 sysbus.gpioPortB.redLEDEnable
 logLevel -1 sysbus.gpioPortB.vibrator
 
 # sysbus LogPeripheralAccess flash_controller

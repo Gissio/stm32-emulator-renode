@@ -47,31 +47,14 @@ gpioPortA: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010800, +0x400>
     1 -> exti@1
 
 gpioPortB: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010C00, +0x400>
-    3 -> pulseLED@0
-    4 -> alertLED@0
+    3 -> greenLEDEnable@0
+    4 -> redLEDEnable@0
     5 -> vibrator@0
     11 -> st7789@1
-    15 -> pulseLED@0
 
 gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     3 -> powerEnable@0
     6 -> st7789@0
-
-tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
-    frequency: 72000000
-    initialLimit: 0xFFFF
-
-tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
-    frequency: 72000000
-    initialLimit: 0xFFFF
-
-tim3: Timers.STM32F1_TIM @ sysbus 0x40000400
-    frequency: 72000000
-    initialLimit: 0xFFFF
-
-tim4: Timers.STM32F1_TIM @ sysbus 0x40000800
-    frequency: 72000000
-    initialLimit: 0xFFFF
 
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
 
@@ -92,8 +75,8 @@ powerCharging: Miscellaneous.Button @ gpioPortB
 
 vibrator: Miscellaneous.LED @ gpioPortB
 
-pulseLED: Miscellaneous.LED @ gpioPortB
-alertLED: Miscellaneous.LED @ gpioPortB
+greenLEDEnable: Miscellaneous.LED @ gpioPortB
+redLEDEnable: Miscellaneous.LED @ gpioPortB
 
 st7789: Video.ST7789 @ spi1
     width:240
