@@ -1,6 +1,6 @@
 [![Screenshot](img/screenshot-1.png)](https://www.youtube.com/watch?v=0moxgiwxw80&pp=ygUXInN0bTMyLWVtdWxhdG9yLXJlbm9kZSI%3D)
 
-(click for video)
+(click screenshot for video)
 
 # STM32 Emulator Renode
 
