@@ -11,8 +11,8 @@ include @../src/ST7789.cs
 mach create
 machine LoadPlatformDescription @emulation.repl
 
-$bin_raw?=@firmware/radpro-gq-gmc800-en-3.0.2.bin
-sysbus LoadBinary $bin_raw 0x08000000
+$firmware_binary?=@firmware/radpro-gq-gmc800-en-3.0.2.bin
+sysbus LoadBinary $firmware_binary 0x08000000
 
 cpu VectorTableOffset 0x08000000
 

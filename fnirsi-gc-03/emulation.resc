@@ -11,14 +11,15 @@ include @../src/ST7789.cs
 mach create
 machine LoadPlatformDescription @emulation.repl
 
-$bootloader_bin?=@firmware/fnirsi-gc03-bootloader.bin
-sysbus LoadBinary $bootloader_bin 0x08000000
+$bootloader_binary?=@firmware/fnirsi-gc03-bootloader.bin
+sysbus LoadBinary $bootloader_binary 0x08000000
 
-$bin_raw?=@firmware/fnirsi-gc03-v1.0.4.bin
-sysbus LoadBinary $bin_raw 0x08006000
+# $firmware_binary?=@firmware/fnirsi-gc03-v1.0.4.bin
+$firmware_binary?=@firmware/firmware.bin
+sysbus LoadBinary $firmware_binary 0x08006000
 
-$settings_bin?=@firmware/settings.bin
-sysbus LoadBinary $settings_bin 0x0803fc00
+$settings_binary?=@firmware/settings.bin
+sysbus LoadBinary $settings_binary 0x0803fc00
 
 cpu VectorTableOffset 0x08000000
 

@@ -11,11 +11,11 @@ include @../src/ST7789.cs
 mach create
 machine LoadPlatformDescription @emulation.repl
 
-$bootloader_bin?=@firmware/fnirsi-gc01_apm32f103rbt6-bootloader.bin
-sysbus LoadBinary $bootloader_bin 0x08000000
+$bootloader_binary?=@firmware/fnirsi-gc01_apm32f103rbt6-bootloader_patched.bin
+sysbus LoadBinary $bootloader_binary 0x08000000
 
-$bin_raw?=@firmware/fnirsi-gc01_apm32f103rbt6-v1.6.bin
-sysbus LoadBinary $bin_raw 0x08004000
+$firmware_binary?=@firmware/fnirsi-gc01_apm32f103rbt6-v1.6.bin
+sysbus LoadBinary $firmware_binary 0x08004000
 
 cpu VectorTableOffset 0x08000000
 
