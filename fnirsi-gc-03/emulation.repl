@@ -2,7 +2,7 @@
 //    size: 0x10000000
 
 sram: Memory.MappedMemory @ sysbus 0x20000000
-    size: 0x10000
+    size: 0x8000
 
 flash: Memory.MappedMemory @ sysbus 0x08000000
     size: 0x40000
@@ -36,6 +36,11 @@ cpu: CPU.CortexM @ sysbus
     nvic: nvic
 
 rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
+    frequency: 32000
+    windowOption: false
+    defaultPrescaler: 0
 
 rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
@@ -85,6 +90,9 @@ adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
     // IRQ -> nvic@3
     DMARequest -> dma1@1
 
+crc: CRC.STM32_CRC @ sysbus 0x40023000
+    series: STM32Series.F0
+
 dma1: DMA.STM32G0DMA @ sysbus 0x40020000
     numberOfChannels: 7
     [0-6] -> nvic@[11-17]
@@ -120,7 +128,6 @@ st7789: Video.ST7789 @ spi1
     knobB -> gpioPortB@7
     keyDown -> gpioPortB@6
     keySpace -> gpioPortA@3
-    keySpaceInvert:false
 
 sysbus:
     init:

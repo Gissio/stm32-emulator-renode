@@ -88,7 +88,6 @@ st7789: Video.ST7789 @ spi1
     keyUp -> gpioPortC@0
     keyDown -> gpioPortC@2
     keySpace -> gpioPortC@10
-    keySpaceInvert:false
 
 sysbus:
     init:
