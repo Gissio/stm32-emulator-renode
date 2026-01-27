@@ -14,8 +14,7 @@ machine LoadPlatformDescription @emulation.repl
 $bootloader_binary?=@firmware/fnirsi-gc03-bootloader.bin
 sysbus LoadBinary $bootloader_binary 0x08000000
 
-# $firmware_binary?=@firmware/fnirsi-gc03-v1.0.4.bin
-$firmware_binary?=@firmware/firmware.bin
+$firmware_binary?=@firmware/fnirsi-gc03-v1.0.4.bin
 sysbus LoadBinary $firmware_binary 0x08006000
 
 $settings_binary?=@firmware/settings.bin
