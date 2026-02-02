@@ -1,5 +1,6 @@
-// fsmcBank1: Memory.MappedMemory @ sysbus 0x60000000
-//    size: 0x10000000
+sysbus:
+    init:
+        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz
 
 sram: Memory.MappedMemory @ sysbus 0x20000000
     size: 0x5000
@@ -10,14 +11,18 @@ flash: Memory.MappedMemory @ sysbus 0x08000000
 flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
     flash: flash
     pageSize: 0x400
-    pageNum: 0x40
+    pageNum: 0x80
 
 peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
     peripheralBase: 0x40000000
 
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
+
 nvic: IRQControllers.NVIC @ sysbus 0xE000E000
     priorityMask: 0xF0
-    systickFrequency: 144000000
+    systickFrequency: 72000000
     IRQ -> cpu@0
 
 nvicInput23: Miscellaneous.CombinedInput @ none
@@ -34,11 +39,15 @@ exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
     [5-9] -> nvicInput23@[0-4]
     [10-15] -> nvicInput40@[0-5]
 
-cpu: CPU.CortexM @ sysbus
-    cpuType: "cortex-m3"
-    nvic: nvic
-
 rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+crc: CRC.STM32_CRC @ sysbus 0x40023000
+    series: STM32Series.F0
+
+iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
+    frequency: 32000
+    windowOption: false
+    defaultPrescaler: 0
 
 rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
@@ -57,26 +66,20 @@ gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     8 -> st7789@1
     10 -> exti@10
 
-tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
-    IRQ -> nvic@25
-    frequency: 72000000
-    initialLimit: 0xFFFF
-
-tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
-    IRQ -> nvic@28
-    frequency: 72000000
-    initialLimit: 0xFFFF
-
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
     IRQ -> nvic@3
 
-spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
+dma1: DMA.STM32G0DMA @ sysbus 0x40020000
+    numberOfChannels: 7
+    [0-6] -> nvic@[11-17]
 
 powerEnable: Miscellaneous.LED @ gpioPortA
 
 pulseLED: Miscellaneous.LED @ gpioPortA
 
 vibrator: Miscellaneous.LED @ gpioPortA
+
+spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
 
 st7789: Video.ST7789 @ spi1
     width:240
@@ -88,7 +91,3 @@ st7789: Video.ST7789 @ spi1
     keyUp -> gpioPortC@0
     keyDown -> gpioPortC@2
     keySpace -> gpioPortC@10
-
-sysbus:
-    init:
-        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz

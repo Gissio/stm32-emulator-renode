@@ -22,9 +22,13 @@ sysbus LoadBinary $settings_binary 0x0803fc00
 
 cpu VectorTableOffset 0x08000000
 
+# Battery voltage
 adc1 FeedSample 2482 10 1000000
-adc1 FeedSample 160 12 1000000
-adc1 FeedSample 140 13 1000000
+# Electric field voltage
+adc1 FeedSample 200 12 1000000
+# Magnetic field voltage
+adc1 FeedSample 200 13 1000000
+# VREF
 adc1 FeedSample 1489 17 1000000
 
 showAnalyzer spi1.st7789

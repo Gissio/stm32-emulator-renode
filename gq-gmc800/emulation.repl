@@ -15,6 +15,10 @@ flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
 peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
     peripheralBase: 0x40000000
 
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
+
 nvic: IRQControllers.NVIC @ sysbus 0xE000E000
     priorityMask: 0xF0
     systickFrequency: 72000000
@@ -34,11 +38,15 @@ exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
     [5-9] -> nvicInput23@[0-4]
     [10-15] -> nvicInput40@[0-5]
 
-cpu: CPU.CortexM @ sysbus
-    cpuType: "cortex-m3"
-    nvic: nvic
-
 rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+crc: CRC.STM32_CRC @ sysbus 0x40023000
+    series: STM32Series.F0
+
+iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
+    frequency: 32000
+    windowOption: false
+    defaultPrescaler: 0
 
 rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
@@ -57,10 +65,6 @@ gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     6 -> st7789@0
 
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
-
-dma1: DMA.STM32G0DMA @ sysbus 0x40020000
-    numberOfChannels: 7
-    [0-6] -> nvic@[11-17]
 
 spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
 

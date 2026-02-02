@@ -1,5 +1,6 @@
-// fsmcBank1: Memory.MappedMemory @ sysbus 0x60000000
-//    size: 0x10000000
+sysbus:
+    init:
+        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz
 
 sram: Memory.MappedMemory @ sysbus 0x20000000
     size: 0x8000
@@ -9,8 +10,12 @@ flash: Memory.MappedMemory @ sysbus 0x08000000
 
 flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
     flash: flash
-    pageSize: 0x400
-    pageNum: 0x100
+    pageSize: 0x1000
+    pageNum: 0x40
+
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
 
 nvic: IRQControllers.NVIC @ sysbus 0xE000E000
     priorityMask: 0xF0
@@ -31,11 +36,10 @@ exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
     [5-9] -> nvicInput23@[0-4]
     [10-15] -> nvicInput40@[0-5]
 
-cpu: CPU.CortexM @ sysbus
-    cpuType: "cortex-m3"
-    nvic: nvic
-
 rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+crc: CRC.STM32_CRC @ sysbus 0x40023000
+    series: STM32Series.F0
 
 iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
     frequency: 32000
@@ -61,51 +65,31 @@ gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     4 -> st7789@1
     5 -> st7789@0
 
-tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
-    frequency: 144000000
-    initialLimit: 0xFFFF
-    IRQ -> nvic@25
-
+// ADC Timer
 tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
     frequency: 144000000
     initialLimit: 0xFFFF
     IRQ -> nvic@28
     TriggerOutput2 -> adc1@0
 
-tim5: Timers.STM32F1_TIM @ sysbus 0x40000c00
-    frequency: 144000000
-    initialLimit: 0xFFFF
-    IRQ -> nvic@50
-
+// Software timer
 tim7: Timers.STM32F1_TIM @ sysbus 0x40001400
     frequency: 144000000
     initialLimit: 0xFFFF
     IRQ -> nvic@55
 
-tim10: Timers.STM32F1_TIM @ sysbus 0x40015000
-    frequency: 144000000
-    initialLimit: 0xFFFF
-
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
     // IRQ -> nvic@3
     DMARequest -> dma1@1
-
-crc: CRC.STM32_CRC @ sysbus 0x40023000
-    series: STM32Series.F0
 
 dma1: DMA.STM32G0DMA @ sysbus 0x40020000
     numberOfChannels: 7
     [0-6] -> nvic@[11-17]
 
-spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
-
-usart3: UART.STM32_UART @ sysbus <0x40004800, +0x100>
-    -> nvic@39
-
 powerEnable: Miscellaneous.LED @ gpioPortA
-powerUSB: Miscellaneous.Button @ gpioPortC
-    -> gpioPortC@6
 powerCharging: Miscellaneous.Button @ gpioPortC
+    -> gpioPortC@6
+powerUSB: Miscellaneous.Button @ gpioPortC
     -> gpioPortC@7
 
 emfMeterEn: Miscellaneous.LED @ gpioPortB
@@ -116,12 +100,14 @@ vibrator: Miscellaneous.LED @ gpioPortB
 
 pb12: Miscellaneous.LED @ gpioPortB
 
+spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
+
 st7789: Video.ST7789 @ spi1
     width:240
     height:320
     rotation:0
     keyEnter -> gpioPortA@9
-    keyEnterInvert:false
+    keyEnterInvert: false
     keyLeft -> gpioPortB@9
     keyRight -> gpioPortB@8
     knobA -> gpioPortB@5
@@ -129,6 +115,5 @@ st7789: Video.ST7789 @ spi1
     keyDown -> gpioPortB@6
     keySpace -> gpioPortA@3
 
-sysbus:
-    init:
-        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz
+usart3: UART.STM32_UART @ sysbus <0x40004800, +0x100>
+    -> nvic@39

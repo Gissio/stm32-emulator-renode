@@ -11,16 +11,22 @@ include @../src/ST7789.cs
 mach create
 machine LoadPlatformDescription @emulation.repl
 
-$bootloader_binary?=@firmware/fnirsi-gc01_apm32f103rbt6-bootloader_patched.bin
+# $bootloader_binary?=@firmware/fnirsi-gc01_ch32f103r8t6-bootloader_patched.bin
+$bootloader_binary?=@firmware/fnirsi-gc01_apm32f103rbt6-bootloader_configured.bin
 sysbus LoadBinary $bootloader_binary 0x08000000
 
+# $firmware_binary?=@firmware/fnirsi-gc01_ch32f103r8t6-v1.5.bin
 $firmware_binary?=@firmware/fnirsi-gc01_apm32f103rbt6-v1.6.bin
 sysbus LoadBinary $firmware_binary 0x08004000
 
 cpu VectorTableOffset 0x08000000
 
+# Battery voltage
 adc1 FeedSample 2482 0 1000000
-adc1 FeedSample 2000 4 1000000
+# Charge status voltage
+adc1 FeedSample 2600 4 1000000
+# VREF
+adc1 FeedSample 1489 17 1000000
 
 showAnalyzer spi1.st7789
 
