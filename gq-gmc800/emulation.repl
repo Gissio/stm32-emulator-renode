@@ -1,5 +1,6 @@
-// fsmcBank1: Memory.MappedMemory @ sysbus 0x60000000
-//    size: 0x10000000
+sysbus:
+    init:
+        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz
 
 sram: Memory.MappedMemory @ sysbus 0x20000000
     size: 0x10000
@@ -32,6 +33,10 @@ nvicInput40: Miscellaneous.CombinedInput @ none
     numberOfInputs: 6
     -> nvic@40
 
+dma1: DMA.STM32G0DMA @ sysbus 0x40020000
+    numberOfChannels: 7
+    [0-6] -> nvic@[11-17]
+    
 exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
     numberOfOutputLines: 19
     [0-4] -> nvic@[6-10]
@@ -64,6 +69,26 @@ gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
     3 -> powerEnable@0
     6 -> st7789@0
 
+tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@25
+
+tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@28
+
+tim3: Timers.STM32F1_TIM @ sysbus 0x40000400
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@29
+
+tim4: Timers.STM32F1_TIM @ sysbus 0x40000800
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@30
+
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
 
 spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
@@ -88,10 +113,7 @@ st7789: Video.ST7789 @ spi1
     rotation:0
     keyLeft -> gpioPortB@15
     keyRight -> gpioPortB@10
+    keyRightInvert: false
     keyUp -> gpioPortB@14
     keyDown -> gpioPortB@13
     keySpace -> gpioPortA@1
-
-sysbus:
-    init:
-        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz

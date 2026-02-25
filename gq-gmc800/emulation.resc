@@ -29,5 +29,8 @@ logLevel -1 sysbus.gpioPortB.redLEDEnable
 logLevel -1 sysbus.gpioPortB.vibrator
 
 # sysbus LogPeripheralAccess flash_controller
+sysbus LogPeripheralAccess tim4
+
+# showAnalyzer usart1
 
 start

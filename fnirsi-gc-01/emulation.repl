@@ -52,19 +52,43 @@ iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
 rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
     -> nvic@3
 
-gpioPortA: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010800, +0x400>
+gpioPortA: GPIOPort.STM32F1_GPIO @ sysbus <0x40010800, +0x400>
     2 -> powerEnable@0
     9 -> vibrator@0
     15 -> pulseLED@0
 
-gpioPortB: GPIOPort.STM32F1GPIOPort @ sysbus <0x40010C00, +0x400>
+gpioPortB: GPIOPort.STM32F1_GPIO @ sysbus <0x40010C00, +0x400>
     [0-15] -> st7789@[16-31]
 
-gpioPortC: GPIOPort.STM32F1GPIOPort @ sysbus <0x40011000, +0x400>
+gpioPortC: GPIOPort.STM32F1_GPIO @ sysbus <0x40011000, +0x400>
     5 -> st7789@0
     7 -> st7789@3
     8 -> st7789@1
     10 -> exti@10
+
+tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@25
+
+tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@28
+
+tim3: Timers.STM32F1_TIM @ sysbus 0x40000400
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@29
+
+tim4: Timers.STM32F1_TIM @ sysbus 0x40000800
+    frequency: 72000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@30
+
+tim5: Timers.STM32F1_TIM @ sysbus 0x40000c00
+    frequency: 72000000
+    initialLimit: 0xFFFF
 
 adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
     IRQ -> nvic@3

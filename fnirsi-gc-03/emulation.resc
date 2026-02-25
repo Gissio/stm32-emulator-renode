@@ -41,4 +41,7 @@ logLevel -1 sysbus.gpioPortB.pb12
 
 # sysbus LogPeripheralAccess flash_controller
 
+gpioPortC.powerCharging Press
+gpioPortC.powerUSB Press
+
 start

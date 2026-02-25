@@ -2,6 +2,7 @@ using sysbus
 
 include @../src/STM32F1_ADC.cs
 include @../src/STM32F1_FlashController.cs
+include @../src/STM32F1_GPIO.cs
 include @../src/STM32F1_RCC.cs
 include @../src/STM32F1_RTC.cs
 include @../src/STM32F1_SPI.cs
@@ -22,9 +23,9 @@ sysbus LoadBinary $firmware_binary 0x08004000
 cpu VectorTableOffset 0x08000000
 
 # Battery voltage
-adc1 FeedSample 2482 0 1000000
+adc1 FeedSample 2382 0 1000000
 # Charge status voltage
-adc1 FeedSample 2600 4 1000000
+adc1 FeedSample 2401 4 1000000
 # VREF
 adc1 FeedSample 1489 17 1000000
 
