@@ -1,0 +1,37 @@
+using sysbus
+
+include @../src/STM32F1_ADC.cs
+include @../src/STM32F1_FlashController.cs
+include @../src/STM32F1_GPIO.cs
+include @../src/STM32F1_RCC.cs
+include @../src/STM32F1_RTC.cs
+include @../src/STM32F1_SPI.cs
+include @../src/STM32F1_TIM.cs
+include @../src/ST7565.cs
+
+mach create
+machine LoadPlatformDescription @emulation.repl
+
+# FS2011 hardware variant: GD32F103C8
+$firmware_binary?=@firmware/radpro-fs2011-gd32f103c8-en-3.0.2.bin
+sysbus LoadBinary $firmware_binary 0x08000000
+
+cpu VectorTableOffset 0x08000000
+
+# Default channel (ADC sequence defaults to channel 0)
+adc1 FeedSample 0 0 1000000
+# Battery voltage (channel 4) - ~3.0V for 2xAA
+adc1 FeedSample 3700 4 1000000
+# VREF (channel 17)
+adc1 FeedSample 1489 17 1000000
+
+showAnalyzer spi1.st7565
+
+# Sync virtual time with wall-clock time
+emulation SetAdvanceImmediately false
+
+logLevel -1 sysbus.gpioPortB.powerEnable
+logLevel -1 sysbus.gpioPortB.buzzer
+logLevel -1 sysbus.gpioPortB.vibrator
+
+start

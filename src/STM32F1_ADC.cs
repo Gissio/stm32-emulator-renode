@@ -287,7 +287,7 @@ namespace Antmicro.Renode.Peripherals.Analog
             endOfConversion.Value = true;
 
             // Iterate to next channel
-            currentChannelIdx = (currentChannelIdx + 1) % regularSequenceLen;
+            currentChannelIdx = regularSequenceLen > 0 ? (currentChannelIdx + 1) % regularSequenceLen : 0;  // avoid divide-by-zero
             currentChannel = channels[regularSequence[currentChannelIdx].Value];
 
             // Auto trigger next conversion if we're scanning or CONT bit set

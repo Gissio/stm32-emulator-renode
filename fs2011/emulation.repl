@@ -1,0 +1,125 @@
+sysbus:
+    init:
+        ApplySVD @https://dl.antmicro.com/projects/renode/svd/STM32F103.svd.gz
+
+sram: Memory.MappedMemory @ sysbus 0x20000000
+    size: 0x5000
+
+flash: Memory.MappedMemory @ sysbus 0x08000000
+    size: 0x10000
+
+flash_controller: MTD.STM32F1_FlashController @ sysbus 0x40022000
+    flash: flash
+    pageSize: 0x400
+    pageNum: 0x40
+
+peripheral_bb: Miscellaneous.BitBanding @ sysbus <0x42000000, 0x43FFFFFF>
+    peripheralBase: 0x40000000
+
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m3"
+    nvic: nvic
+
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    priorityMask: 0xF0
+    systickFrequency: 32000000
+    IRQ -> cpu@0
+
+nvicInput23: Miscellaneous.CombinedInput @ none
+    numberOfInputs: 5
+    -> nvic@23
+
+nvicInput40: Miscellaneous.CombinedInput @ none
+    numberOfInputs: 6
+    -> nvic@40
+
+exti: IRQControllers.STM32F4_EXTI @ sysbus 0x40010400
+    numberOfOutputLines: 19
+    [0-4] -> nvic@[6-10]
+    [5-9] -> nvicInput23@[0-4]
+    [10-15] -> nvicInput40@[0-5]
+
+rcc: Miscellaneous.STM32F1_RCC @ sysbus 0x40021000
+
+crc: CRC.STM32_CRC @ sysbus 0x40023000
+    series: STM32Series.F0
+
+iwdg: Timers.STM32_IndependentWatchdog @ sysbus 0x40003000
+    frequency: 32000
+    windowOption: false
+    defaultPrescaler: 0
+
+rtc: Timers.STM32F1_RTC @ sysbus 0x40002800
+    -> nvic@3
+
+gpioPortA: GPIOPort.STM32F1_GPIO @ sysbus <0x40010800, +0x400>
+    6 -> exti@6
+    8 -> st7565@16
+    9 -> st7565@17
+    10 -> st7565@18
+    11 -> st7565@19
+    12 -> st7565@20
+    15 -> st7565@23
+
+gpioPortB: GPIOPort.STM32F1_GPIO @ sysbus <0x40010C00, +0x400>
+    5 -> buzzer@0
+    6 -> vibrator@0
+    8 -> st7565@21
+    9 -> st7565@22
+    10 -> powerEnable@0
+    12 -> st7565@0
+    13 -> st7565@1
+    15 -> st7565@2
+
+// Tube detection slave timer
+tim1: Timers.STM32F1_TIM @ sysbus 0x40012c00
+    frequency: 8000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@25
+
+// Display backlight timer
+tim2: Timers.STM32F1_TIM @ sysbus 0x40000000
+    frequency: 8000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@28
+
+// HV PWM timer
+tim3: Timers.STM32F1_TIM @ sysbus 0x40000400
+    frequency: 8000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@29
+
+// Tube detection master timer
+tim4: Timers.STM32F1_TIM @ sysbus 0x40000800
+    frequency: 8000000
+    initialLimit: 0xFFFF
+    IRQ -> nvic@30
+
+adc1: Analog.STM32F1_ADC @ sysbus 0x40012400
+    DMARequest -> dma1@1
+
+dma1: DMA.STM32G0DMA @ sysbus 0x40020000
+    numberOfChannels: 7
+    [0-6] -> nvic@[11-17]
+
+powerEnable: Miscellaneous.LED @ gpioPortB
+
+buzzer: Miscellaneous.LED @ gpioPortB
+
+vibrator: Miscellaneous.LED @ gpioPortB
+
+spi1: SPI.STM32F1_SPI @ sysbus 0x40013000
+
+st7565: Video.ST7565 @ spi1
+    width: 128
+    height: 64
+    keyEnter -> gpioPortB@11
+    keySpace -> gpioPortA@6
+    keySpaceInvert: false
+    keyUp -> gpioPortA@7
+    keyDown -> gpioPortB@0
+    keyLeft -> gpioPortB@2
+    keyRight -> gpioPortB@1
+
+usart2: UART.STM32_UART @ sysbus <0x40004400, +0x100>
+    -> nvic@38
