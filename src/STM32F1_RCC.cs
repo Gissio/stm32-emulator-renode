@@ -161,7 +161,7 @@ namespace Antmicro.Renode.Peripherals.Miscellaneous
                     .WithFlag(16, name: "BDRST")
                     .WithReservedBits(17, 15)
                 },
-                {(long)Registers.ControlAndStatus, new DoubleWordRegister(this, 0x0C000000)
+                {(long)Registers.ControlAndStatus, new DoubleWordRegister(this, 0x04000000) // turn on immediately
                     .WithFlag(0, out var lsion, name: "LSION")
                     .WithFlag(1, FieldMode.Read,
                         valueProviderCallback: _ => lsion.Value, name: "LSIRDY")
